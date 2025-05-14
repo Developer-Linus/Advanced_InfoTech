@@ -1,5 +1,5 @@
 // Responsible for creating and exporting MySQL pool connection
-const mysql = require("mysql2/promise");
+import mysql from "mysql2/promise";
 
 import dotenv from "dotenv";
 dotenv.config();

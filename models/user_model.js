@@ -24,7 +24,7 @@ export const createUser = async (user) => {
     password,
     phone_number,
     address,
-    (role = "customer"),
+    role,
   ]);
   return result.insertId;
 };
@@ -38,7 +38,7 @@ export const getUserByEmail = async (email) => {
 
 // Get user by id
 export const getUserById = async (user_id) => {
-  const sql = `SELECT * FROM users WHERE user_id=?`;
+  const sql = `SELECT first_name, last_name, email, phone_number, address FROM users WHERE user_id=?`;
   const [rows] = await pool.query(sql, [user_id]);
   return rows[0];
 };
@@ -91,7 +91,7 @@ export const updateUserPassword = async (user_id, oldPassword, newPassword) => {
   const currentHash = rows[0].password_hash;
 
   // Verify old password
-  const isMatch = await comparePassword(oldPassword, newPassword);
+  const isMatch = await comparePassword(oldPassword, currentHash);
   if(!isMatch){
     throw new Error('Old password is incorrect.');
   }
