@@ -1,5 +1,19 @@
 -- Create Database
 CREATE DATABASE IF NOT EXISTS advanced_infotech;
+
+-- Create users Table
+CREATE TABLE IF NOT EXISTS users (
+    user_id INT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    phone_number VARCHAR(20),
+    address TEXT,
+    role ENUM('customer', 'admin') DEFAULT 'customer',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Create Categories Table
 CREATE TABLE IF NOT EXISTS categories (
     category_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -59,14 +73,3 @@ CREATE TABLE IF NOT EXISTS discounts (
     FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
 );
 
--- Create customers Table
-CREATE TABLE IF NOT EXISTS customers (
-    customer_id INT PRIMARY KEY AUTO_INCREMENT,
-    first_name VARCHAR(255) NOT NULL,
-    last_name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NOT NULL,
-    phone_number VARCHAR(20),
-    address TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
