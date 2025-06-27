@@ -2,6 +2,7 @@
 
 import {
   createUser,
+  createAdmin,
   getUserByEmail,
   getUserById,
   updateUser,
@@ -53,6 +54,42 @@ export const registerUser = async (req, res) => {
     res
       .status(500)
       .json({ message: "Error registering user.", error: err.message });
+  }
+};
+
+// Create an admin (Only registered admins are allowed)
+export const registerAdmin = async (req, res) => {
+  try {
+    const { first_name, last_name, email, password, phone_number, address } =
+      req.body;
+    if (!first_name || !last_name || !email || !password) {
+      return res.status(400).json({ message: "Missing required fields." });
+    }
+    const existingUser = await getUserByEmail(email);
+    if (existingUser) {
+      return res
+        .status(409)
+        .json({ message: "Admin with this email address already exists." });
+    }
+
+    const hashed = await hashPassword(password);
+
+    const adminId = await createAdmin({
+      first_name,
+      last_name,
+      email,
+      password: hashed,
+      phone_number,
+      address,
+    });
+
+    res
+      .status(201)
+      .json({ message: "Admin created successfully.", admin_id: adminId });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Server error creating an admin.", error: err.message });
   }
 };
 

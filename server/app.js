@@ -1,12 +1,16 @@
 // Responsible for 
 
 import express from "express";
+import cors from "cors";
 import dotenv from "dotenv";
 import userRoutes from "./routes/user_routes.js";
+import categoryRoutes from "./routes/category_routes.js";
 
 dotenv.config();
 
 const app = express();
+
+app.use(cors({ origin: 'http://localhost:5173' }));
 
 // Middleware
 app.use(express.json()); // Parse JSON bodies
@@ -14,6 +18,10 @@ app.use(express.urlencoded({ extended: true })); // Parse URL-encoded form data
 
 // Routes
 app.use("/api/users", userRoutes);
+app.use("/api/categories", categoryRoutes);
+
+
+
 app.use('/', async(req, res)=>{
     res.send('Welcome to Advanced InfoTech.');
 });

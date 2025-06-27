@@ -12,8 +12,32 @@ export const createUser = async (user) => {
     password,
     phone_number,
     address,
-    role = "customer",
   } = user;
+
+  const sql = `INSERT INTO users (first_name, last_name, email, password_hash, phone_number, address) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+
+  const [result] = await pool.execute(sql, [
+    first_name,
+    last_name,
+    email,
+    password,
+    phone_number,
+    address,
+  ]);
+  return result.insertId;
+};
+
+// Create an admin user
+export const createAdmin = async (admin) => {
+  const {
+    first_name,
+    last_name,
+    email,
+    password,
+    phone_number,
+    address,
+    role = "admin",
+  } = admin;
 
   const sql = `INSERT INTO users (first_name, last_name, email, password_hash, phone_number, address, role) VALUES (?, ?, ?, ?, ?, ?, ?)`;
 
@@ -84,23 +108,26 @@ export const updateUserPassword = async (user_id, oldPassword, newPassword) => {
     [user_id]
   );
 
-  if(rows.length === 0){
-    throw new Error('User not found.');
+  if (rows.length === 0) {
+    throw new Error("User not found.");
   }
 
   const currentHash = rows[0].password_hash;
 
   // Verify old password
   const isMatch = await comparePassword(oldPassword, currentHash);
-  if(!isMatch){
-    throw new Error('Old password is incorrect.');
+  if (!isMatch) {
+    throw new Error("Old password is incorrect.");
   }
 
   // Hash new password using hash utility
   const newHash = await hashPassword(newPassword);
 
   // Update password in DB
-  const [ result ] = await pool.execute(`UPDATE users SET password_hash = ? WHERE user_id = ?`, [newHash, user_id]);
+  const [result] = await pool.execute(
+    `UPDATE users SET password_hash = ? WHERE user_id = ?`,
+    [newHash, user_id]
+  );
   return result.affectedRows;
 };
 
